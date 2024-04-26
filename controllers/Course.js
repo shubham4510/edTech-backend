@@ -1,5 +1,5 @@
+const Category = require('../models/Category')
 const Course = require('../models/Course')
-const Tag = require('../models/Tags')
 const User = require('../models/User')
 const {uploadImageToCloudinary} = require('../utils/imageUploader')
 
@@ -7,13 +7,13 @@ const {uploadImageToCloudinary} = require('../utils/imageUploader')
 exports.createCourse = async (req,res) =>{
     try {
         //fetch data
-        const {courseName,courseDescription,whatYouWillLearn,price,tag} = req.body
+        const {courseName,courseDescription,whatYouWillLearn,price,category} = req.body
 
         //get thumbnail
         const thumbnail = req.files.thumbnailImage;
 
         //validation
-        if(!courseName || !courseDescription || !whatYouWillLearn || !price || !tag || !thumbnail){
+        if(!courseName || !courseDescription || !whatYouWillLearn || !price || !category || !thumbnail){
             return res.status(400).json({
                 success:false,
                 message:'All fields are required',
@@ -33,12 +33,12 @@ exports.createCourse = async (req,res) =>{
             })
         }
 
-        //check given tag is valid or not
-        const tagDetails = await Tag.find({tag})
-        if(!tagDetails){
+        //check given category is valid or not
+        const categoryDetails = await Category.find({category})
+        if(!categoryDetails){
             return res.status(404).json({
                 success:false,
-                message:'Tag Details not found'
+                message:'category Details not found'
             })
         }
 
@@ -52,14 +52,14 @@ exports.createCourse = async (req,res) =>{
             instructor:instructorDetails._id,
             whatYouWillLearn,
             price,
-            tag:tagDetails._id,
+            category:categoryDetails._id,
             thumbnail:thumbnailImage.secure_url,
         })
 
         //add the new course to the user schema of Instructor
         await User.findByIdAndUpdate({_id:instructorDetails._id},{$push:{courses:newCourse._id,}},{new:true})
 
-        //update the TAG ka schema
+        //update the CATEGORY ka schema
         //TODO: HW
 
         //return response

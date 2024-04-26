@@ -19,10 +19,12 @@ const courseSchema = new mongoose.Schema({
     whatYouWillLearn:{
         type:String,
     },
-    courseContent:{
+    courseContent:[
+        {
         type:mongoose.Schema.Types.ObjectId,
-        ref:"SubSection",
-    },
+        ref:"Section",
+    }
+],
     ratingAndReviews:[
         {
             type:mongoose.Schema.Types.ObjectId,
@@ -35,15 +37,21 @@ const courseSchema = new mongoose.Schema({
     thumbnail:{
         type:String,
     },
-    tag:{
+    category:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Tag",
+        ref:"Category",
     },
-    studentsEnrolled:{
+    tag:{
+        type:[String],
+        required:true,
+    },
+    studentsEnrolled:[
+        {
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
         required:true,
-    },
+    }
+],
 })
 
 module.exports = mongoose.model("Course",courseSchema)
