@@ -8,69 +8,64 @@ require('dotenv').config();
 
 
 // sendOTP
-exports.sendOTP = async (req,res)=>{
-
+exports.sendOTP = async (req, res) => {
     try {
-        
-         // fetch email from requrest ki body
-    const {email} = req.body;
+        // Fetch email from request body
+        const { email } = req.body;
 
-    // check if user alredy exist
-    const checkUserPresent = await User.findOne({email});
+        // Check if user already exists
+        const checkUserPresent = await User.findOne({ email });
 
-    //if user already exist, then return a response
-    if(checkUserPresent){
-        return res.status(401).json({
-            success:false,
-            message: 'User already registered',
-        })
-    }
+        // If user already exists, return a response
+        if (checkUserPresent) {
+            return res.status(401).json({
+                success: false,
+                message: 'User already registered',
+            });
+        }
 
-    //generate OTP 
-    var otp = otpGenerator.generate(6,{
-        upperCaseAlphabets:false,
-        lowerCaseAlphabets:false,
-        specialChars:false,
-    })
-    console.log("OTP generated ",otp);
-
-    //check unique otp or not 
-    const result = await OTP.findOne({otp})
-
-    while(result){
-        otp = otpGenerator.generate(6,{
-            upperCaseAlphabets:false,
-            lowerCaseAlphabets:false,
-            specialChars:false,
+        // Generate OTP 
+        let otp = otpGenerator.generate(6, {
+            upperCaseAlphabets: false,
+            lowerCaseAlphabets: false,
+            specialChars: false,
         });
+        console.log("OTP generated ", otp);
 
-        result = await OTP.findOne({otp})
-    }
+        // Check if OTP is unique
+        let result = await OTP.findOne({ otp });
 
-    const otpPayload = {email,otp};
+        while (result) {
+            otp = otpGenerator.generate(6, {
+                upperCaseAlphabets: false,
+                lowerCaseAlphabets: false,
+                specialChars: false,
+            });
 
-    //create an entry for OTP
-    const otpBody = await OTP.create(otpPayload)
-    console.log(otpBody);
+            result = await OTP.findOne({ otp });
+        }
 
-    //return response successful
-    res.status(200).json({
-        success:true,
-        message:'OTP Sent Successfully',
-        otp,
-    })
+        const otpPayload = { email, otp };
+
+        // Create an entry for OTP
+        const otpBody = await OTP.create(otpPayload);
+        console.log(otpBody);
+
+        // Return successful response
+        res.status(200).json({
+            success: true,
+            message: 'OTP Sent Successfully',
+            otp,
+        });
 
     } catch (error) {
         console.log(error);
         return res.status(500).json({
-            success:false,
-            message:error.message,
-        })
+            success: false,
+            message: error.message,
+        });
     }
-
-   
-
-}
+};
 
 //signUp
 exports.signUp = async (req,res)=>{

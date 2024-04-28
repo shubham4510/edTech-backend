@@ -3,7 +3,7 @@ require('dotenv').config()
 const User = require('../models/User')
 
 //auth
-exports.auht = async (req,res,next) =>{
+exports.auth = async (req,res,next) =>{
     try {
         //extract token
         const token = req.cookies.token || req.body.token || req.header("Authorisation").replace("Bearer ","")
