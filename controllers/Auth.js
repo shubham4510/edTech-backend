@@ -23,6 +23,7 @@ exports.signup = async (req, res) => {
 			contactNumber,
 			otp,
 		} = req.body;
+
 		// Check if All Details are there or not
 		if (
 			!firstName ||
@@ -86,6 +87,7 @@ exports.signup = async (req, res) => {
 			about: null,
 			contactNumber: null,
 		});
+
 		const user = await User.create({
 			firstName,
 			lastName,
